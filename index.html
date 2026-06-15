@@ -25,17 +25,16 @@ button:active{opacity:.7}
 .tabs::-webkit-scrollbar{display:none}
 .tab{background:none;border:none;border-bottom:2px solid transparent;color:#48484a;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:10px 12px;white-space:nowrap;border-radius:0}
 .tab.on{color:#e5e5e7;border-bottom-color:#e5e5e7}
-.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}
-.badge-box{text-align:center}.badge-num{font-size:20px;font-weight:700;line-height:1.1}.badge-lbl{font-size:8px;letter-spacing:.08em}
-.alert-row{background:#0f0f11;border-radius:8px;padding:10px 12px;margin-bottom:4px;border-left:3px solid}
-.pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:500;padding:3px 8px;border-radius:4px}
+.grid6{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:8px}
+.badge-box{text-align:center}.badge-num{font-size:17px;font-weight:700;line-height:1.1}.badge-lbl{font-size:7px;letter-spacing:.04em;white-space:nowrap}
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
 .kpi{background:#141416;border:1px solid #2c2c2e;border-radius:8px;padding:12px 14px}
+.kpi-lbl{font-size:9px;color:#48484a;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.kpi-val{font-size:24px;font-family:'Syne',sans-serif;font-weight:800;color:#e5e5e7}
 .drop{border:2px dashed #3a3a3c;border-radius:10px;padding:32px 20px;text-align:center;cursor:pointer}
 .drop:active{border-color:#636366;background:#141416}
 .msg-ok{background:#0a1f0f;border:1px solid #30d15844;border-radius:8px;padding:10px 14px;font-size:12px;color:#30d158;margin-top:10px}
 .msg-err{background:#2a0d0a;border:1px solid #ff3b3044;border-radius:8px;padding:10px 14px;font-size:12px;color:#ff3b30;margin-top:10px}
-.tag{background:#1c1c1e;border:1px solid #2c2c2e;border-radius:6px;padding:4px 9px;font-size:11px;display:inline-flex;gap:4px;align-items:center}
 .form-label{font-size:9px;color:#48484a;letter-spacing:.1em;margin-bottom:4px;display:block}
 .hidden{display:none}
 .prod-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
@@ -43,23 +42,30 @@ button:active{opacity:.7}
 .content{padding:14px 16px;max-width:900px;margin:0 auto}
 .lbl{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;letter-spacing:-.02em}
 .sublbl{font-size:9px;color:#48484a;letter-spacing:.1em}
-.crit-badge{background:#2a0d0a;border:1px solid #ff3b3055;border-radius:6px;padding:4px 10px;font-size:10px;color:#ff3b30;font-weight:500}
 table th{font-weight:400}
+.row{background:#0f0f11;border-radius:8px;padding:12px;margin-bottom:5px;border:1px solid #1c1c1e}
+.row-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.pname{font-size:13px;font-weight:500}
+.psku{font-size:10px;color:#48484a;margin-top:2px}
+.ventas{text-align:right}
+.ventas-sem{font-size:18px;font-weight:700;font-family:'Syne',sans-serif;color:#30d158}
+.ventas-mes{font-size:10px;color:#48484a;margin-top:2px}
+.detalle{font-size:9px;color:#636366;margin-top:6px}
+.step{color:#e5e5e7}
+.step span{color:#aeaeb2}
 </style>
 </head>
 <body>
 <div id="app">
   <div style="border-bottom:1px solid #2c2c2e">
     <div class="header-top">
-      <div><div class="lbl">L—PRO</div><div class="sublbl">GESTIÓN DE STOCK · ML ARGENTINA</div></div>
-      <div id="crit-badge" class="hidden crit-badge"></div>
+      <div><div class="lbl">L—PRO</div><div class="sublbl">VENTAS Y STOCK · ML ARGENTINA</div></div>
     </div>
     <div class="tabs" id="tabs">
       <button class="tab on" data-tab="dashboard">Dashboard</button>
       <button class="tab" data-tab="stock">Stock</button>
       <button class="tab" data-tab="reportes">Reportes</button>
       <button class="tab" data-tab="importar">Importar ML</button>
-      <button class="tab" data-tab="historial">Historial</button>
     </div>
   </div>
 
@@ -68,9 +74,8 @@ table th{font-weight:400}
     <!-- DASHBOARD -->
     <div id="tab-dashboard">
       <div class="kpi-grid" id="kpis"></div>
-      <div class="stitle">Estado del stock</div>
-      <div id="tabla-alertas"></div>
-      <div id="leyenda" style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;font-size:9px;color:#48484a"></div>
+      <div class="stitle">Stock y ventas por producto</div>
+      <div id="tabla-productos"></div>
     </div>
 
     <!-- STOCK -->
@@ -113,13 +118,13 @@ table th{font-weight:400}
         <div class="drop" onclick="document.getElementById('file-input').click()">
           <div style="font-size:32px;margin-bottom:8px;color:#48484a">↑</div>
           <div style="font-size:13px;color:#636366">Tocá para elegir el archivo .xlsx</div>
-          <div style="font-size:11px;color:#48484a;margin-top:4px">Reporte de Ventas de Mercado Libre · procesa semanas y meses automáticamente</div>
+          <div style="font-size:11px;color:#48484a;margin-top:4px">La app guarda cada día por separado, así no se pisan datos</div>
         </div>
         <div id="import-msg"></div>
       </div>
       <div class="card" style="margin-bottom:14px">
         <div class="stitle">Productos mapeados por SKU</div>
-        <div style="font-size:11px;color:#48484a;margin-bottom:10px">El reporte se mapea por la columna SKU. Asegurate de que el SKU de la app coincida con el que pusiste en ML.</div>
+        <div style="font-size:11px;color:#48484a;margin-bottom:10px">El reporte se mapea por la columna SKU. Si falta un producto, agregalo en Stock.</div>
         <div id="mapeo-lista"></div>
       </div>
       <div class="card">
@@ -134,11 +139,6 @@ table th{font-weight:400}
         </div>
         <div id="backup-msg" style="margin-top:8px"></div>
       </div>
-    </div>
-
-    <!-- HISTORIAL -->
-    <div id="tab-historial" class="hidden">
-      <div id="historial-content"></div>
     </div>
 
   </div>
@@ -173,190 +173,180 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 // ══════════════════════════════════════════
 // CONSTANTES
 // ══════════════════════════════════════════
-const LEAD_TIME = 20;
+const PRODUCTOS_DEFAULT = [];
 
-const PRODUCTOS_DEFAULT = [
-  {id:"obd2",     nombre:"OBD2 V500",             sku:"3001", canal:"full"},
-  {id:"co",       nombre:"CO Detector 5en1",       sku:"3002", canal:"full"},
-  {id:"wall",     nombre:"Detector Pared GY-QB5",  sku:"3017", canal:"full"},
-  {id:"clamp",    nombre:"Pinza GL218S",            sku:"3003", canal:"full"},
-  {id:"multi",    nombre:"Multímetro BSIDE A1",    sku:"3012", canal:"full"},
-  {id:"gas",      nombre:"Detector Gas ZL73A",      sku:"3014", canal:"full"},
-  {id:"humidity", nombre:"Detector Humedad",        sku:"3005", canal:"full"},
-  {id:"thermo",   nombre:"Termómetro Infrarrojo",  sku:"3006", canal:"full"},
-  {id:"onboard",  nombre:"Computadora Abordo",      sku:"3007", canal:"flex"},
+// Estados que NO se cuentan como venta válida
+const ESTADOS_EXCLUIR = [
+  "Cancelada por el comprador",
+  "Devolución finalizada con reembolso al comprador",
+  "Te dimos el dinero del producto que te devolvieron"
 ];
 
-const ESTADOS_VALIDOS = ["Entregado","En camino","Etiqueta lista para imprimir",
-  "Mediación finalizada. Te dimos el dinero.","Te dimos el dinero del producto que te devolvieron"];
+const CAMPOS = ["full","flex","correo","deposito","transitoFull","importacion"];
+const CAMPO_LABELS = {full:"FULL",flex:"FLEX",correo:"CORREO",deposito:"DEPÓSITO",transitoFull:"TRÁNS.FULL",importacion:"IMPORT."};
+const CC = {full:"#0a84ff",flex:"#30d158",correo:"#ff9f0a",deposito:"#636366",transitoFull:"#5e5ce6",importacion:"#bf5af2"};
 
-const NIVEL = {
-  "sin-stock-full": {color:"#ff2d55",bg:"#2a0a12",label:"SIN STOCK FULL", icon:"⊗"},
-  "sin-stock-flex": {color:"#ff2d55",bg:"#2a0a12",label:"SIN STOCK FLEX", icon:"⊗"},
-  "rojo":           {color:"#ff3b30",bg:"#2a0d0a",label:"IMPORTAR YA",    icon:"▲"},
-  "naranja":        {color:"#ff9500",bg:"#291e00",label:"INICIAR IMPORT", icon:"◆"},
-  "amarillo-full":  {color:"#ffd60a",bg:"#252000",label:"REPONER FULL",   icon:"◉"},
-  "amarillo-flex":  {color:"#ffd60a",bg:"#252000",label:"REPONER FLEX",   icon:"◉"},
-  "verde":          {color:"#30d158",bg:"#0a2812",label:"OK",             icon:"●"},
-  "sin-datos":      {color:"#48484a",bg:"#1c1c1e",label:"SIN DATOS",      icon:"○"},
-};
-const CC = {full:"#0a84ff",flex:"#30d158",correo:"#ff9f0a",reserva:"#636366",transito:"#5e5ce6"};
 const MESES_ES = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
 const MESES_FULL_MAP = {enero:0,febrero:1,marzo:2,abril:3,mayo:4,junio:5,julio:6,agosto:7,septiembre:8,octubre:9,noviembre:10,diciembre:11};
-const DIAS_ES = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
 
-function emptyStock(){return {full:0,flex:0,correo:0,reserva:0,transito:0};}
+function emptyStock(){
+  const s={}; CAMPOS.forEach(c=>s[c]=0); return s;
+}
 
 // ══════════════════════════════════════════
 // ESTADO
 // ══════════════════════════════════════════
-let productos=[], historial=[], editMode=false, editData={}, currentTab="dashboard";
+let productos=[], ventasDiarias={}, editMode=false, editData={}, currentTab="dashboard";
 
 function loadState(){
-  try{ productos=JSON.parse(localStorage.getItem("lpro4_prods")||"null")||PRODUCTOS_DEFAULT.map(p=>({...p,stock:emptyStock()})); }
-  catch{ productos=PRODUCTOS_DEFAULT.map(p=>({...p,stock:emptyStock()})); }
-  try{ historial=JSON.parse(localStorage.getItem("lpro4_hist")||"[]"); }
-  catch{ historial=[]; }
+  try{ productos=JSON.parse(localStorage.getItem("lpro5_prods")||"null")||[]; }
+  catch{ productos=[]; }
+  try{ ventasDiarias=JSON.parse(localStorage.getItem("lpro5_dias")||"{}"); }
+  catch{ ventasDiarias={}; }
+  // Asegurar que todos los productos tengan los 6 campos de stock
+  productos.forEach(p=>{
+    if(!p.stock)p.stock=emptyStock();
+    CAMPOS.forEach(c=>{ if(p.stock[c]===undefined) p.stock[c]=0; });
+  });
 }
 function saveState(){
-  localStorage.setItem("lpro4_prods",JSON.stringify(productos));
-  localStorage.setItem("lpro4_hist",JSON.stringify(historial));
+  localStorage.setItem("lpro5_prods",JSON.stringify(productos));
+  localStorage.setItem("lpro5_dias",JSON.stringify(ventasDiarias));
 }
 
 // ══════════════════════════════════════════
 // HELPERS DE FECHA
 // ══════════════════════════════════════════
 function parseFechaML(dateStr){
-  const m=dateStr.match(/(\d+) de (\w+) de (\d+)/);
+  const m=String(dateStr).match(/(\d+) de (\w+) de (\d+)/);
   if(!m)return null;
   return new Date(parseInt(m[3]),MESES_FULL_MAP[m[2].toLowerCase()],parseInt(m[1]));
 }
-function getISOWeek(dateStr){
-  const d=parseFechaML(dateStr);
-  if(!d)return null;
-  const thu=new Date(d); thu.setDate(d.getDate()+3-((d.getDay()+6)%7));
+function toISODate(d){
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function fromISODate(s){
+  const [y,m,d]=s.split("-").map(Number);
+  return new Date(y,m-1,d);
+}
+function getISOWeekInfo(d){
+  const monday=new Date(d); monday.setDate(d.getDate()-((d.getDay()+6)%7));
+  monday.setHours(0,0,0,0);
+  const sunday=new Date(monday); sunday.setDate(monday.getDate()+6);
+  const thu=new Date(monday); thu.setDate(monday.getDate()+3);
   const jan4=new Date(thu.getFullYear(),0,4);
   const week=1+Math.round(((thu-jan4)/86400000-3+((jan4.getDay()+6)%7))/7);
-  return thu.getFullYear()+"-S"+String(week).padStart(2,"0");
+  return {key:thu.getFullYear()+"-W"+String(week).padStart(2,"0"), monday, sunday};
 }
-function getMonthKey(dateStr){
-  const d=parseFechaML(dateStr);
-  if(!d)return null;
-  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
+function getMonthKey(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");}
+function fmtDia(d){return d.getDate()+" "+MESES_ES[d.getMonth()];}
+function rangoLabel(monday,sunday){
+  const y=monday.getFullYear()!==sunday.getFullYear()?(" "+monday.getFullYear()):"";
+  return fmtDia(monday)+y+" — "+fmtDia(sunday)+" "+sunday.getFullYear();
 }
-function semanaToFechas(semKey){
-  // "2026-S22" -> "26 May - 01 Jun 2026"
-  const m=semKey.match(/(\d+)-S(\d+)/);
-  if(!m)return semKey;
-  const year=parseInt(m[1]), week=parseInt(m[2]);
-  // Calcular lunes de esa semana ISO
-  const jan4=new Date(year,0,4);
-  const lunes=new Date(jan4);
-  lunes.setDate(jan4.getDate()-((jan4.getDay()+6)%7)+(week-1)*7);
-  const domingo=new Date(lunes); domingo.setDate(lunes.getDate()+6);
-  const fmt=(d)=>d.getDate()+" "+MESES_ES[d.getMonth()];
-  const yearStr=lunes.getFullYear()!==domingo.getFullYear()?(" "+lunes.getFullYear()):"";
-  return fmt(lunes)+yearStr+" — "+fmt(domingo)+" "+domingo.getFullYear();
+function monthLabel(key){const [y,m]=key.split("-");return MESES_ES[parseInt(m)-1]+" "+y;}
+
+// ══════════════════════════════════════════
+// AGREGACIONES
+// ══════════════════════════════════════════
+function getAllDatesSorted(){return Object.keys(ventasDiarias).sort();}
+
+function sumVentas(dateKeys, prodId){
+  let full=0,flex=0,correo=0,total=0;
+  dateKeys.forEach(dk=>{
+    const v=ventasDiarias[dk]?.[prodId];
+    if(v){full+=v.full||0;flex+=v.flex||0;correo+=v.correo||0;total+=v.total||0;}
+  });
+  return {full,flex,correo,total};
 }
-function monthLabel(key){
-  const [y,m]=key.split("-");
-  return MESES_ES[parseInt(m)-1]+" "+y;
+
+function getUltimaSemanaInfo(){
+  const dates=getAllDatesSorted();
+  if(!dates.length)return null;
+  const last=fromISODate(dates[dates.length-1]);
+  const {monday,sunday}=getISOWeekInfo(last);
+  const keys=dates.filter(dk=>{const d=fromISODate(dk);return d>=monday&&d<=sunday;});
+  return {monday,sunday,keys};
+}
+
+function getUltimoMesInfo(){
+  const dates=getAllDatesSorted();
+  if(!dates.length)return null;
+  const last=fromISODate(dates[dates.length-1]);
+  const mk=getMonthKey(last);
+  const keys=dates.filter(dk=>getMonthKey(fromISODate(dk))===mk);
+  return {monthKey:mk,keys};
+}
+
+function getSemanasInfo(){
+  const dates=getAllDatesSorted();
+  const map={};
+  dates.forEach(dk=>{
+    const d=fromISODate(dk);
+    const {key,monday,sunday}=getISOWeekInfo(d);
+    if(!map[key])map[key]={key,monday,sunday,dates:[]};
+    map[key].dates.push(dk);
+  });
+  return Object.values(map).sort((a,b)=>b.monday-a.monday);
+}
+function getMesesInfo(){
+  const dates=getAllDatesSorted();
+  const map={};
+  dates.forEach(dk=>{
+    const mk=getMonthKey(fromISODate(dk));
+    if(!map[mk])map[mk]={key:mk,dates:[]};
+    map[mk].dates.push(dk);
+  });
+  return Object.values(map).sort((a,b)=>b.key.localeCompare(a.key));
 }
 
 // ══════════════════════════════════════════
-// LÓGICA DE ALERTAS
+// PARSER ML
 // ══════════════════════════════════════════
-function calcVelocidad(prodId, campo){
-  // Últimas 8 semanas, velocidad por canal
-  const sems=historial.filter(s=>s.tipo==="semana"&&s.ventas[prodId])
-    .sort((a,b)=>b.semana.localeCompare(a.semana)).slice(0,8);
-  if(!sems.length)return 0;
-  const tot=sems.reduce((a,s)=>a+(s.ventas[prodId]?.[campo]||0),0);
-  return tot/sems.length; // u/semana
-}
-
-function calcAlerta(prod){
-  const st=prod.stock||emptyStock();
-  const velFull=calcVelocidad(prod.id,"full");
-  const velFlex=calcVelocidad(prod.id,"flex");
-  const velTotal=(velFull+velFlex)/7; // u/día total
-  const velFullDia=velFull/7;
-  const velFlexDia=velFlex/7;
-
-  const sinDatos=(velFull===0&&velFlex===0);
-  if(sinDatos)return{nivel:"sin-datos",velFull:0,velFlex:0,dias:null,diasFull:null,diasFlex:null,reservaMin:0,reservaOk:true};
-
-  // Reserva mínima necesaria = velocidad diaria total × lead time
-  const reservaMin=Math.ceil(velTotal*LEAD_TIME);
-  const reservaOk=(st.reserva||0)+(st.transito||0)>=reservaMin;
-
-  // Días de cobertura por canal
-  const diasFull=velFullDia>0?Math.floor((st.full||0)/velFullDia):Infinity;
-  const diasFlex=velFlexDia>0?Math.floor((st.flex||0)/velFlexDia):Infinity;
-  // Días totales con reserva incluida
-  const diasTotal=velTotal>0?Math.floor(((st.full||0)+(st.flex||0)+(st.reserva||0))/velTotal):Infinity;
-
-  let nivel;
-  // Prioridad: sin stock > importar urgente > iniciar import > reponer canal
-  if((st.full||0)===0&&velFull>0) nivel="sin-stock-full";
-  else if((st.flex||0)===0&&velFlex>0) nivel="sin-stock-flex";
-  else if(!reservaOk&&(st.transito||0)===0) nivel="rojo";
-  else if(!reservaOk) nivel="naranja";
-  else if(diasFull!==Infinity&&diasFull<=LEAD_TIME*2&&velFull>0) nivel="amarillo-full";
-  else if(diasFlex!==Infinity&&diasFlex<=LEAD_TIME*2&&velFlex>0) nivel="amarillo-flex";
-  else nivel="verde";
-
-  return{
-    nivel,
-    velFull:velFull.toFixed(1),
-    velFlex:velFlex.toFixed(1),
-    dias:diasTotal===Infinity?null:diasTotal,
-    diasFull:diasFull===Infinity?null:diasFull,
-    diasFlex:diasFlex===Infinity?null:diasFlex,
-    reservaMin,
-    reservaOk
-  };
-}
-
 function parsearML(data){
   let hRow=-1;
   for(let i=0;i<Math.min(data.length,10);i++){if(data[i]&&data[i][0]==="# de venta"){hRow=i;break;}}
   if(hRow===-1)return{error:"No se encontró el encabezado. ¿Es el reporte de ventas de ML?"};
   const H=data[hRow];
   const c=n=>H.findIndex(h=>h===n);
-  const cF=c("Fecha de venta"),cE=c("Estado"),cU=c("Unidades");
-  const cSKU=c("SKU"),cFE=c("Forma de entrega");
-  if(cF===-1)return{error:"Columnas no encontradas."};
+  const cF=c("Fecha de venta"),cE=c("Estado"),cU=c("Unidades"),cSKU=c("SKU"),cFE=c("Forma de entrega");
+  if(cF===-1)return{error:"Columna 'Fecha de venta' no encontrada."};
+  if(cSKU===-1)return{error:"Columna 'SKU' no encontrada en el reporte."};
 
-  const semanas={},meses={};
-  let proc=0,ign=0,sinSku=0;
+  const diasNuevos={};
+  const skuNoEncontrado={};
+  let proc=0, ign=0;
 
   for(let i=hRow+1;i<data.length;i++){
     const row=data[i];
     if(!row||!row[cF])continue;
-    if(!ESTADOS_VALIDOS.includes(row[cE])){ign++;continue;}
-    const sem=getISOWeek(String(row[cF]));
-    const mes=getMonthKey(String(row[cF]));
-    if(!sem||!mes)continue;
+    const estado=String(row[cE]||"").trim();
+    if(ESTADOS_EXCLUIR.includes(estado)){ign++;continue;}
+    const d=parseFechaML(row[cF]);
+    if(!d)continue;
+    const dateKey=toISODate(d);
+
     const skuVal=String(row[cSKU]||"").trim();
-    let prod=skuVal?productos.find(p=>p.sku&&p.sku===skuVal):null;
-    if(!prod){sinSku++;continue;}
+    const prod=skuVal?productos.find(p=>p.sku&&p.sku===skuVal):null;
+    if(!prod){
+      if(skuVal){skuNoEncontrado[skuVal]=(skuNoEncontrado[skuVal]||0)+(parseInt(row[cU])||1);}
+      else ign++;
+      continue;
+    }
+
     const uni=parseInt(row[cU])||1;
     const forma=String(row[cFE]||"").toLowerCase();
     let canal="full";
     if(forma.includes("flex"))canal="flex";
     else if(forma.includes("correo")||forma.includes("punto"))canal="correo";
-    if(!semanas[sem])semanas[sem]={};
-    if(!semanas[sem][prod.id])semanas[sem][prod.id]={full:0,flex:0,correo:0,total:0};
-    semanas[sem][prod.id][canal]+=uni;
-    semanas[sem][prod.id].total+=uni;
-    if(!meses[mes])meses[mes]={};
-    if(!meses[mes][prod.id])meses[mes][prod.id]={full:0,flex:0,correo:0,total:0};
-    meses[mes][prod.id][canal]+=uni;
-    meses[mes][prod.id].total+=uni;
+
+    if(!diasNuevos[dateKey])diasNuevos[dateKey]={};
+    if(!diasNuevos[dateKey][prod.id])diasNuevos[dateKey][prod.id]={full:0,flex:0,correo:0,total:0};
+    diasNuevos[dateKey][prod.id][canal]+=uni;
+    diasNuevos[dateKey][prod.id].total+=uni;
     proc++;
   }
-  return{semanas,meses,proc,ign,sinSku};
+  return{diasNuevos,proc,ign,skuNoEncontrado};
 }
 
 // ══════════════════════════════════════════
@@ -367,7 +357,7 @@ document.querySelectorAll(".tab").forEach(btn=>{
     currentTab=btn.dataset.tab;
     document.querySelectorAll(".tab").forEach(b=>b.classList.remove("on"));
     btn.classList.add("on");
-    ["dashboard","stock","reportes","importar","historial"].forEach(t=>{
+    ["dashboard","stock","reportes","importar"].forEach(t=>{
       const el=document.getElementById("tab-"+t);
       if(el)el.classList.toggle("hidden",t!==currentTab);
     });
@@ -381,69 +371,71 @@ document.querySelectorAll(".tab").forEach(btn=>{
 function badgeHTML(tipo,val){
   const color=CC[tipo];
   const dim=val===0?"#2c2c2e":color;
-  return `<div class="badge-box"><div class="badge-num" style="color:${dim}">${val}</div><div class="badge-lbl" style="color:${color};opacity:${val===0?0.3:0.7}">${tipo.toUpperCase()}</div></div>`;
+  return `<div class="badge-box"><div class="badge-num" style="color:${dim}">${val}</div><div class="badge-lbl" style="color:${color};opacity:${val===0?0.3:0.7}">${CAMPO_LABELS[tipo]}</div></div>`;
 }
 
 function render(){
-  const alertas=productos.map(p=>({...p,al:calcAlerta(p)}));
-  const criticas=alertas.filter(a=>["sin-stock-full","sin-stock-flex","rojo","naranja"].includes(a.al.nivel));
-  const cb=document.getElementById("crit-badge");
-  if(criticas.length>0){cb.textContent=`▲ ${criticas.length} ALERTA${criticas.length>1?"S":""}`;cb.classList.remove("hidden");}
-  else cb.classList.add("hidden");
-  if(currentTab==="dashboard")renderDashboard(alertas,criticas);
+  if(currentTab==="dashboard")renderDashboard();
   else if(currentTab==="stock")renderStock();
   else if(currentTab==="reportes")renderReportes();
   else if(currentTab==="importar")renderImportar();
-  else if(currentTab==="historial")renderHistorial();
 }
 
-function renderDashboard(alertas,criticas){
-  const semanas=historial.filter(s=>s.tipo==="semana").sort((a,b)=>b.semana.localeCompare(a.semana));
-  const ultSem=semanas[0];
-  const totSem=ultSem?Object.values(ultSem.ventas).reduce((a,v)=>a+(v?.total||0),0):0;
-  const ultSemLabel=ultSem?semanaToFechas(ultSem.semana):"—";
+function renderDashboard(){
+  const semInfo=getUltimaSemanaInfo();
+  const mesInfo=getUltimoMesInfo();
 
-  document.getElementById("kpis").innerHTML=[
-    {l:"Productos",v:productos.length},
-    {l:"Última semana importada",v:ultSemLabel,small:true},
-    {l:"Alertas críticas",v:criticas.length,d:criticas.length>0},
-    {l:"Semanas en historial",v:semanas.length},
-  ].map(k=>`<div class="kpi">
-    <div style="font-size:9px;color:#48484a;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">${k.l}</div>
-    <div style="font-size:${k.small?"13px":"24px"};font-family:'Syne',sans-serif;font-weight:800;color:${k.d?"#ff3b30":"#e5e5e7"};line-height:1.2">${k.v}</div>
-  </div>`).join("");
+  let totSemana=0, totMes=0;
+  if(semInfo) productos.forEach(p=>{totSemana+=sumVentas(semInfo.keys,p.id).total;});
+  if(mesInfo) productos.forEach(p=>{totMes+=sumVentas(mesInfo.keys,p.id).total;});
 
-  document.getElementById("tabla-alertas").innerHTML=alertas.map(a=>{
-    const cfg=NIVEL[a.al.nivel];
-    const st=a.stock||emptyStock();
-    const reservaInfo=a.al.reservaMin>0
-      ?`<div style="font-size:9px;margin-top:3px;color:${a.al.reservaOk?"#48484a":"#ff9500"}">Reserva mín: ${a.al.reservaMin}u · Actual: ${st.reserva||0}u${st.transito>0?" + "+st.transito+"u tráns.":""}</div>`
-      :"";
-    return `<div class="alert-row" style="border-left-color:${cfg.color}">
-      <div class="prod-header">
+  const semLabel=semInfo?rangoLabel(semInfo.monday,semInfo.sunday):"—";
+  const mesLabel=mesInfo?monthLabel(mesInfo.monthKey):"—";
+
+  document.getElementById("kpis").innerHTML=`
+    <div class="kpi">
+      <div class="kpi-lbl">Ventas última semana${semInfo?` · ${semLabel}`:""}</div>
+      <div class="kpi-val">${totSemana} u.</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">Ventas este mes${mesInfo?` · ${mesLabel}`:""}</div>
+      <div class="kpi-val">${totMes} u.</div>
+    </div>`;
+
+  if(!productos.length){
+    document.getElementById("tabla-productos").innerHTML=`<div class="card" style="text-align:center;padding:40px;color:#48484a">
+      <div style="font-size:28px;margin-bottom:8px">○</div>
+      <div>No hay productos cargados.</div>
+      <div style="font-size:11px;margin-top:4px">Agregalos desde la pestaña Stock.</div>
+    </div>`;
+    return;
+  }
+
+  document.getElementById("tabla-productos").innerHTML=productos.map(p=>{
+    const st=p.stock||emptyStock();
+    const vSem=semInfo?sumVentas(semInfo.keys,p.id):{full:0,flex:0,correo:0,total:0};
+    const vMes=mesInfo?sumVentas(mesInfo.keys,p.id):{full:0,flex:0,correo:0,total:0};
+
+    const detalle=[];
+    if(vSem.full>0)detalle.push(`<span style="color:#0a84ff">F${vSem.full}</span>`);
+    if(vSem.flex>0)detalle.push(`<span style="color:#30d158">Fx${vSem.flex}</span>`);
+    if(vSem.correo>0)detalle.push(`<span style="color:#ff9f0a">C${vSem.correo}</span>`);
+
+    return `<div class="row">
+      <div class="row-top">
         <div>
-          <div style="font-size:13px;font-weight:500">${a.nombre}</div>
-          <div style="font-size:10px;color:#48484a;margin-top:2px">
-            SKU ${a.sku}
-            ${a.al.velFull>0?` · <span style="color:#0a84ff">Full ${a.al.velFull}u/sem</span>`:""}
-            ${a.al.velFlex>0?` · <span style="color:#30d158">Flex ${a.al.velFlex}u/sem</span>`:""}
-            ${a.al.dias!==null?` · ${a.al.dias}d cobertura`:""}
-          </div>
-          ${reservaInfo}
+          <div class="pname">${p.nombre}</div>
+          <div class="psku">SKU ${p.sku}</div>
         </div>
-        <div style="text-align:right">
-          <span class="pill" style="background:${cfg.bg};color:${cfg.color};border:1px solid ${cfg.color}33">${cfg.icon} ${cfg.label}</span>
-          ${a.al.diasFull!==null&&a.al.diasFull<30&&a.al.velFull>0?`<div style="font-size:9px;color:#ff3b30;margin-top:3px">Full quiebra en ${a.al.diasFull}d</div>`:""}
-          ${a.al.diasFlex!==null&&a.al.diasFlex<30&&a.al.velFlex>0?`<div style="font-size:9px;color:#ff9500;margin-top:3px">Flex quiebra en ${a.al.diasFlex}d</div>`:""}
+        <div class="ventas">
+          <div class="ventas-sem">${vSem.total} u. <span style="font-size:10px;color:#48484a;font-weight:400">/sem</span></div>
+          <div class="ventas-mes">${vMes.total} u. este mes</div>
         </div>
       </div>
-      <div class="grid5">${["full","flex","correo","reserva","transito"].map(t=>badgeHTML(t,st[t]||0)).join("")}</div>
+      <div class="grid6">${CAMPOS.map(c=>badgeHTML(c,st[c]||0)).join("")}</div>
+      ${detalle.length?`<div class="detalle">${detalle.join(" ")}</div>`:""}
     </div>`;
   }).join("");
-
-  document.getElementById("leyenda").innerHTML=`
-    <div style="width:100%;margin-bottom:6px;font-size:10px;color:#636366">Las alertas se calculan en base a velocidad de venta Full + Flex vs reserva disponible</div>
-    ${Object.entries(NIVEL).map(([k,v])=>`<div style="display:flex;align-items:center;gap:4px"><span style="color:${v.color}">${v.icon}</span>${v.label}</div>`).join("")}`;
 }
 
 function renderStock(){
@@ -451,101 +443,94 @@ function renderStock(){
     ?`<button class="btnw" onclick="guardarStock()">Guardar</button><button class="btng" onclick="cancelarEdit()">Cancelar</button>`
     :`<button class="btnw" onclick="iniciarEdit()">Editar stock</button>`;
 
-  document.getElementById("lista-stock").innerHTML=productos.map(p=>{
-    const st=editMode?(editData[p.id]||emptyStock()):(p.stock||emptyStock());
-    const al=calcAlerta(p);
-    const reservaInfo=!editMode&&al.reservaMin>0
-      ?`<div style="font-size:9px;margin-top:4px;color:${al.reservaOk?"#30d158":"#ff9500"}">
-          ${al.reservaOk?"✓ Reserva suficiente":"⚠ Reserva mínima necesaria: "+al.reservaMin+"u"}
-        </div>`:"";
-    const campos=editMode
-      ?["full","flex","correo","reserva","transito"].map(c=>`
-        <div class="badge-box">
-          <div style="font-size:9px;color:${CC[c]};margin-bottom:4px;letter-spacing:.06em">${c.toUpperCase()}</div>
-          <input type="number" min="0" value="${st[c]||0}" style="width:60px;text-align:center;padding:5px 4px;font-size:13px" oninput="editData['${p.id}']['${c}']=parseInt(this.value)||0">
-        </div>`).join("")
-      :["full","flex","correo","reserva","transito"].map(c=>badgeHTML(c,st[c]||0)).join("");
-    return `<div class="card">
-      <div class="prod-header">
-        <div>
-          <div style="font-size:13px;font-weight:500">${p.nombre}</div>
-          <div style="font-size:9px;color:#48484a;margin-top:2px">SKU <span style="color:#aeaeb2;font-weight:500">${p.sku||"—"}</span> · ${p.canal.toUpperCase()}</div>
-          ${reservaInfo}
+  if(!productos.length){
+    document.getElementById("lista-stock").innerHTML=`<div class="card" style="text-align:center;padding:30px;color:#48484a">Agregá tu primer producto abajo.</div>`;
+  } else {
+    document.getElementById("lista-stock").innerHTML=productos.map(p=>{
+      const st=editMode?(editData[p.id]||emptyStock()):(p.stock||emptyStock());
+      const campos=editMode
+        ?CAMPOS.map(c=>`
+          <div class="badge-box">
+            <div style="font-size:8px;color:${CC[c]};margin-bottom:4px;letter-spacing:.06em">${CAMPO_LABELS[c]}</div>
+            <input type="number" min="0" value="${st[c]||0}" style="width:58px;text-align:center;padding:5px 4px;font-size:13px" oninput="editData['${p.id}']['${c}']=parseInt(this.value)||0">
+          </div>`).join("")
+        :CAMPOS.map(c=>badgeHTML(c,st[c]||0)).join("");
+      return `<div class="card">
+        <div class="prod-header">
+          <div>
+            <div style="font-size:13px;font-weight:500">${p.nombre}</div>
+            <div style="font-size:9px;color:#48484a;margin-top:2px">SKU <span style="color:#aeaeb2;font-weight:500">${p.sku||"—"}</span> · ${p.canal.toUpperCase()}</div>
+          </div>
+          <button class="btnd" onclick="eliminarProducto('${p.id}')">✕</button>
         </div>
-        <button class="btnd" onclick="eliminarProducto('${p.id}')">✕</button>
-      </div>
-      <div class="grid5">${campos}</div>
-    </div>`;
-  }).join("");
+        <div class="grid6">${campos}</div>
+      </div>`;
+    }).join("");
+  }
 }
 
 function renderReportes(){
-  const semanas=historial.filter(s=>s.tipo==="semana").sort((a,b)=>b.semana.localeCompare(a.semana));
-  const mesesData=historial.filter(s=>s.tipo==="mes").sort((a,b)=>b.semana.localeCompare(a.semana));
+  const semanas=getSemanasInfo().slice(0,8);
+  const meses=getMesesInfo().slice(0,4);
 
-  if(!semanas.length){
-    document.getElementById("reporte-content").innerHTML=`<div class="card" style="text-align:center;padding:40px;color:#48484a"><div style="font-size:28px;margin-bottom:8px">○</div><div>Importá ventas primero.</div></div>`;
+  if(!semanas.length||!productos.length){
+    document.getElementById("reporte-content").innerHTML=`<div class="card" style="text-align:center;padding:40px;color:#48484a"><div style="font-size:28px;margin-bottom:8px">○</div><div>Importá ventas primero desde la pestaña Importar ML.</div></div>`;
     return;
   }
 
-  const sems8=semanas.slice(0,8);
-  const mes4=mesesData.slice(0,4);
   let html="";
 
   // ── TABLA SEMANAL ──
-  html+=`<div class="stitle">Ventas por semana · últimas ${sems8.length} semanas</div>`;
-  html+=`<div style="overflow-x:auto;margin-bottom:20px"><table style="width:100%;border-collapse:collapse;font-size:11px;min-width:500px">`;
+  html+=`<div class="stitle">Ventas por semana · últimas ${semanas.length} semanas</div>`;
+  html+=`<div style="overflow-x:auto;margin-bottom:20px"><table style="width:100%;border-collapse:collapse;font-size:11px;min-width:560px">`;
   html+=`<tr><th style="text-align:left;padding:6px 8px;color:#48484a;font-weight:400;font-size:9px;border-bottom:1px solid #2c2c2e;white-space:nowrap">PRODUCTO</th>`;
-  sems8.forEach(s=>{
-    const fechas=semanaToFechas(s.semana);
-    const [desde,hasta]=fechas.split(" — ");
-    html+=`<th style="text-align:center;padding:4px 6px;color:#48484a;font-weight:400;font-size:8px;border-bottom:1px solid #2c2c2e;white-space:nowrap">${desde}<br>${hasta}</th>`;
+  semanas.forEach(s=>{
+    html+=`<th style="text-align:center;padding:4px 6px;color:#48484a;font-weight:400;font-size:8px;border-bottom:1px solid #2c2c2e;white-space:nowrap">${fmtDia(s.monday)}<br>${fmtDia(s.sunday)}</th>`;
   });
   html+=`<th style="text-align:center;padding:6px 8px;color:#aeaeb2;font-weight:500;font-size:9px;border-bottom:1px solid #2c2c2e">PROM</th></tr>`;
 
   productos.forEach(p=>{
-    const totales=sems8.map(s=>(s.ventas[p.id]?.total||0));
-    const prom=(totales.reduce((a,b)=>a+b,0)/sems8.length).toFixed(1);
+    const totales=semanas.map(s=>sumVentas(s.dates,p.id).total);
     if(totales.every(v=>v===0))return;
+    const prom=(totales.reduce((a,b)=>a+b,0)/totales.length).toFixed(1);
     html+=`<tr style="border-bottom:1px solid #1c1c1e">`;
     html+=`<td style="padding:8px;color:#e5e5e7;white-space:nowrap">${p.nombre}<br><span style="color:#48484a;font-size:9px">SKU ${p.sku}</span></td>`;
     totales.forEach(v=>html+=`<td style="text-align:center;padding:6px;color:${v===0?"#2c2c2e":"#30d158"};font-weight:${v>0?"700":"400"}">${v||"—"}</td>`);
     html+=`<td style="text-align:center;padding:6px 8px;color:#e5e5e7;font-weight:700">${prom}</td></tr>`;
   });
-  // Total
-  const totSems=sems8.map((_,i)=>productos.reduce((a,p)=>{const s=sems8[i];return a+(s.ventas[p.id]?.total||0);},0));
+  const totSems=semanas.map(s=>productos.reduce((a,p)=>a+sumVentas(s.dates,p.id).total,0));
   html+=`<tr style="border-top:2px solid #3a3a3c"><td style="padding:8px;color:#636366;font-size:9px">TOTAL</td>`;
   totSems.forEach(v=>html+=`<td style="text-align:center;padding:6px;color:#aeaeb2;font-weight:700">${v}</td>`);
-  html+=`<td style="text-align:center;color:#aeaeb2;font-weight:700">${(totSems.reduce((a,b)=>a+b,0)/sems8.length).toFixed(1)}</td></tr>`;
+  html+=`<td style="text-align:center;color:#aeaeb2;font-weight:700">${(totSems.reduce((a,b)=>a+b,0)/totSems.length).toFixed(1)}</td></tr>`;
   html+=`</table></div>`;
 
   // ── TABLA MENSUAL ──
-  if(mes4.length>=1){
+  if(meses.length>=1){
     html+=`<div class="stitle" style="margin-top:4px">Ventas por mes · por producto</div>`;
     html+=`<div style="overflow-x:auto;margin-bottom:20px"><table style="width:100%;border-collapse:collapse;font-size:11px">`;
     html+=`<tr><th style="text-align:left;padding:6px 8px;color:#48484a;font-weight:400;font-size:9px;border-bottom:1px solid #2c2c2e">PRODUCTO</th>`;
-    mes4.forEach(m=>html+=`<th style="text-align:center;padding:6px 8px;color:#48484a;font-weight:400;font-size:9px;border-bottom:1px solid #2c2c2e">${monthLabel(m.semana)}</th>`);
-    if(mes4.length>=2)html+=`<th style="text-align:center;padding:6px 8px;color:#aeaeb2;font-weight:500;font-size:9px;border-bottom:1px solid #2c2c2e">VAR%</th>`;
+    meses.forEach(m=>html+=`<th style="text-align:center;padding:6px 8px;color:#48484a;font-weight:400;font-size:9px;border-bottom:1px solid #2c2c2e">${monthLabel(m.key)}</th>`);
+    if(meses.length>=2)html+=`<th style="text-align:center;padding:6px 8px;color:#aeaeb2;font-weight:500;font-size:9px;border-bottom:1px solid #2c2c2e">VAR%</th>`;
     html+=`</tr>`;
 
     productos.forEach(p=>{
-      const totales=mes4.map(m=>(m.ventas[p.id]?.total||0));
+      const totales=meses.map(m=>sumVentas(m.dates,p.id).total);
       if(totales.every(v=>v===0))return;
       html+=`<tr style="border-bottom:1px solid #1c1c1e">`;
       html+=`<td style="padding:8px;color:#e5e5e7">${p.nombre}</td>`;
       totales.forEach((v,i)=>html+=`<td style="text-align:center;padding:6px 8px;color:${v===0?"#2c2c2e":"#e5e5e7"};font-weight:${i===0?"700":"400"}">${v||"—"}</td>`);
-      if(mes4.length>=2){
-        const pct=mes4[1].ventas[p.id]?.total>0?Math.round(((totales[0]-totales[1])/totales[1])*100):null;
+      if(meses.length>=2){
+        const anterior=totales[1];
+        const pct=anterior>0?Math.round(((totales[0]-anterior)/anterior)*100):null;
         const col=pct===null?"#48484a":pct>0?"#30d158":pct<0?"#ff3b30":"#636366";
         html+=`<td style="text-align:center;padding:6px 8px;color:${col};font-weight:700">${pct===null?"—":((pct>0?"+":"")+pct+"%")}</td>`;
       }
       html+=`</tr>`;
     });
-
-    const totPorMes=mes4.map(m=>Object.values(m.ventas).reduce((a,v)=>a+(v?.total||0),0));
+    const totPorMes=meses.map(m=>productos.reduce((a,p)=>a+sumVentas(m.dates,p.id).total,0));
     html+=`<tr style="border-top:2px solid #3a3a3c"><td style="padding:8px;color:#636366;font-size:9px">TOTAL</td>`;
     totPorMes.forEach((v,i)=>html+=`<td style="text-align:center;padding:6px 8px;color:#aeaeb2;font-weight:${i===0?"700":"400"}">${v}</td>`);
-    if(mes4.length>=2){
+    if(meses.length>=2){
       const pct=totPorMes[1]>0?Math.round(((totPorMes[0]-totPorMes[1])/totPorMes[1])*100):0;
       const col=pct>0?"#30d158":pct<0?"#ff3b30":"#636366";
       html+=`<td style="text-align:center;padding:6px 8px;color:${col};font-weight:700">${pct>0?"+":""}${pct}%</td>`;
@@ -553,66 +538,17 @@ function renderReportes(){
     html+=`</tr></table></div>`;
   }
 
-  // ── DETALLE CANAL ÚLTIMO MES ──
-  if(mes4.length>=1){
-    const m=mes4[0];
-    html+=`<div class="stitle">Detalle por canal · ${monthLabel(m.semana)}</div>`;
-    html+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px;margin-bottom:16px">`;
-    productos.forEach(p=>{
-      const v=m.ventas[p.id];
-      if(!v||!v.total)return;
-      html+=`<div class="card" style="padding:12px">
-        <div style="font-size:12px;font-weight:500;margin-bottom:8px">${p.nombre}</div>
-        <div style="display:flex;gap:12px;font-size:11px;flex-wrap:wrap">
-          ${v.full>0?`<span><span style="color:#0a84ff">●</span> Full <b>${v.full}</b></span>`:""}
-          ${v.flex>0?`<span><span style="color:#30d158">●</span> Flex <b>${v.flex}</b></span>`:""}
-          ${v.correo>0?`<span><span style="color:#ff9f0a">●</span> Correo <b>${v.correo}</b></span>`:""}
-          <span style="margin-left:auto;color:#aeaeb2;font-weight:700">${v.total} u.</span>
-        </div>
-      </div>`;
-    });
-    html+=`</div>`;
-  }
-
   document.getElementById("reporte-content").innerHTML=html;
 }
 
 function renderImportar(){
-  document.getElementById("mapeo-lista").innerHTML=productos.map(p=>`
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:#0f0f11;border-radius:6px;font-size:11px;margin-bottom:4px">
-      <span style="color:#aeaeb2">${p.nombre}</span>
-      <span style="background:#1c1c1e;border:1px solid #3a3a3c;border-radius:4px;padding:2px 8px;color:#0a84ff;font-weight:500;font-size:10px">SKU ${p.sku||"—"}</span>
-    </div>`).join("");
-}
-
-function renderHistorial(){
-  const semanas=historial.filter(s=>s.tipo==="semana").sort((a,b)=>b.semana.localeCompare(a.semana));
-  if(!semanas.length){
-    document.getElementById("historial-content").innerHTML=`<div class="card" style="text-align:center;padding:48px;color:#48484a"><div style="font-size:32px;margin-bottom:10px">○</div><div>Importá ventas primero.</div></div>`;
-    return;
-  }
-  document.getElementById("historial-content").innerHTML=semanas.map(s=>{
-    const tot=Object.values(s.ventas).reduce((a,v)=>a+(v?.total||0),0);
-    const fechaLabel=semanaToFechas(s.semana);
-    const tags=Object.entries(s.ventas).map(([id,v])=>{
-      const p=productos.find(x=>x.id===id);
-      if(!v?.total)return"";
-      return `<div class="tag">
-        <span style="color:#636366">${p?.nombre||id}</span>
-        <span style="color:#e5e5e7;font-weight:700;margin-left:4px">${v.total}</span>
-        ${v.full>0?`<span style="color:#0a84ff;font-size:9px">F${v.full}</span>`:""}
-        ${v.flex>0?`<span style="color:#30d158;font-size:9px">Fx${v.flex}</span>`:""}
-        ${v.correo>0?`<span style="color:#ff9f0a;font-size:9px">C${v.correo}</span>`:""}
-      </div>`;
-    }).join("");
-    return `<div class="card">
-      <div style="display:flex;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:4px">
-        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:12px">${fechaLabel}</div>
-        <div style="font-size:11px;color:#48484a">${tot} u.</div>
-      </div>
-      <div style="display:flex;flex-wrap:wrap;gap:5px">${tags}</div>
-    </div>`;
-  }).join("");
+  document.getElementById("mapeo-lista").innerHTML=productos.length
+    ? productos.map(p=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:#0f0f11;border-radius:6px;font-size:11px;margin-bottom:4px">
+        <span style="color:#aeaeb2">${p.nombre}</span>
+        <span style="background:#1c1c1e;border:1px solid #3a3a3c;border-radius:4px;padding:2px 8px;color:#0a84ff;font-weight:500;font-size:10px">SKU ${p.sku||"—"}</span>
+      </div>`).join("")
+    : `<div style="font-size:11px;color:#48484a">No hay productos cargados todavía. Agregalos en la pestaña Stock.</div>`;
 }
 
 // ══════════════════════════════════════════
@@ -621,11 +557,12 @@ function renderHistorial(){
 function iniciarEdit(){editMode=true;editData={};productos.forEach(p=>{editData[p.id]={...(p.stock||emptyStock())};});render();}
 function cancelarEdit(){editMode=false;editData={};render();}
 function guardarStock(){productos=productos.map(p=>({...p,stock:{...(editData[p.id]||emptyStock())}}));editMode=false;editData={};saveState();render();}
-function eliminarProducto(id){if(!confirm("¿Eliminar este producto?"))return;productos=productos.filter(p=>p.id!==id);saveState();render();}
+function eliminarProducto(id){if(!confirm("¿Eliminar este producto? También se pierden sus ventas históricas."))return;productos=productos.filter(p=>p.id!==id);saveState();render();}
 function agregarProducto(){
   const nombre=document.getElementById("np-nombre").value.trim();
   const sku=document.getElementById("np-sku").value.trim();
   if(!nombre||!sku){alert("Nombre y SKU son obligatorios");return;}
+  if(productos.find(p=>p.sku===sku)){alert("Ya existe un producto con ese SKU");return;}
   const canal=document.getElementById("np-canal").value;
   const id="p_"+sku+"_"+Date.now().toString(36);
   productos.push({id,nombre,sku,canal,stock:emptyStock()});
@@ -633,8 +570,13 @@ function agregarProducto(){
   document.getElementById("np-sku").value="";
   saveState();render();
 }
+
 function handleFile(input){
   const file=input.files[0];if(!file)return;
+  if(!productos.length){
+    document.getElementById("import-msg").innerHTML=`<div class="msg-err">⊗ Primero agregá tus productos con SKU en la pestaña Stock.</div>`;
+    input.value="";return;
+  }
   const reader=new FileReader();
   reader.onload=e=>{
     try{
@@ -643,30 +585,43 @@ function handleFile(input){
       const data=XLSX.utils.sheet_to_json(ws,{header:1,defval:""});
       const result=parsearML(data);
       if(result.error){document.getElementById("import-msg").innerHTML=`<div class="msg-err">⊗ ${result.error}</div>`;return;}
-      Object.entries(result.semanas).forEach(([semana,ventas])=>{
-        const idx=historial.findIndex(s=>s.semana===semana&&s.tipo==="semana");
-        if(idx>=0)historial[idx]={semana,ventas,tipo:"semana"};
-        else historial.push({semana,ventas,tipo:"semana"});
-      });
-      Object.entries(result.meses).forEach(([mes,ventas])=>{
-        const idx=historial.findIndex(s=>s.semana===mes&&s.tipo==="mes");
-        if(idx>=0)historial[idx]={semana:mes,ventas,tipo:"mes"};
-        else historial.push({semana:mes,ventas,tipo:"mes"});
-      });
-      historial.sort((a,b)=>b.semana.localeCompare(a.semana));
-      historial=historial.slice(0,200);
+
+      // Reemplazar día por día (solo los días presentes en el archivo)
+      const fechas=Object.keys(result.diasNuevos);
+      fechas.forEach(dk=>{ventasDiarias[dk]=result.diasNuevos[dk];});
       saveState();
-      const nSems=Object.keys(result.semanas).length;
-      const nMeses=Object.keys(result.meses).length;
-      document.getElementById("import-msg").innerHTML=`<div class="msg-ok">✓ ${nSems} semanas · ${nMeses} meses importados<br><span style="color:#1a7a35">· ${result.proc} ventas · ${result.sinSku} sin SKU coincidente</span></div>`;
+
+      // Detalle de fechas procesadas
+      const fechasSorted=fechas.sort();
+      const rango=fechasSorted.length
+        ? `${fmtDia(fromISODate(fechasSorted[0]))} — ${fmtDia(fromISODate(fechasSorted[fechasSorted.length-1]))}`
+        : "—";
+
+      // SKUs no encontrados
+      const skusFaltantes=Object.entries(result.skuNoEncontrado).sort((a,b)=>b[1]-a[1]);
+      let skuMsg="";
+      if(skusFaltantes.length){
+        skuMsg=`<div style="margin-top:8px;padding-top:8px;border-top:1px solid #ff3b3033">
+          <div style="color:#ff9500;font-weight:500;margin-bottom:4px">⚠ SKUs no encontrados en tus productos:</div>
+          ${skusFaltantes.map(([sku,cnt])=>`<div style="color:#ff9500;font-size:11px">SKU ${sku} → ${cnt} venta${cnt!==1?"s":""}</div>`).join("")}
+          <div style="color:#636366;font-size:10px;margin-top:4px">Agregá estos SKUs en Stock si corresponden a productos tuyos.</div>
+        </div>`;
+      }
+
+      document.getElementById("import-msg").innerHTML=`<div class="msg-ok">
+        ✓ ${fechas.length} día${fechas.length!==1?"s":""} procesado${fechas.length!==1?"s":""} (${rango})<br>
+        <span style="color:#1a7a35">· ${result.proc} ventas asignadas a productos · ${result.ign} ignoradas (canceladas/devoluciones)</span>
+        ${skuMsg}
+      </div>`;
       render();
     }catch(err){document.getElementById("import-msg").innerHTML=`<div class="msg-err">⊗ Error: ${err.message}</div>`;}
   };
   reader.readAsArrayBuffer(file);
   input.value="";
 }
+
 function exportarBackup(){
-  const datos={version:3,fecha:new Date().toISOString().slice(0,10),productos,historial};
+  const datos={version:5,fecha:new Date().toISOString().slice(0,10),productos,ventasDiarias};
   const blob=new Blob([JSON.stringify(datos,null,2)],{type:"application/json"});
   const url=URL.createObjectURL(blob);
   const a=document.createElement("a");a.href=url;a.download="lpro-backup-"+datos.fecha+".json";a.click();
@@ -678,9 +633,12 @@ function importarBackup(input){
   reader.onload=e=>{
     try{
       const datos=JSON.parse(e.target.result);
-      if(!datos.productos||!datos.historial)throw new Error("Formato inválido");
-      if(confirm("¿Restaurar backup del "+datos.fecha+"?")){
-        productos=datos.productos;historial=datos.historial;saveState();render();
+      if(!datos.productos)throw new Error("Formato inválido");
+      if(confirm("¿Restaurar backup del "+datos.fecha+"? Reemplaza los datos actuales.")){
+        productos=datos.productos;
+        ventasDiarias=datos.ventasDiarias||{};
+        productos.forEach(p=>{if(!p.stock)p.stock=emptyStock();CAMPOS.forEach(c=>{if(p.stock[c]===undefined)p.stock[c]=0;});});
+        saveState();render();
         document.getElementById("backup-msg").innerHTML='<div class="msg-ok">✓ Backup restaurado</div>';
         setTimeout(()=>{document.getElementById("backup-msg").innerHTML="";},3000);
       }
@@ -694,6 +652,7 @@ function importarBackup(input){
 // ══════════════════════════════════════════
 loadState();
 render();
+
 </script>
 </body>
 </html>
